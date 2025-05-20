@@ -110,6 +110,13 @@
       const voteButtons = document.querySelectorAll(".vote-btn");
       const resultDiv = document.getElementById("vote-result");
 
+      const profile = JSON.parse(localStorage.getItem("fftgProfile"));
+      if (!profile || !profile.name) {
+        alert("Please set up your profile before voting!");
+        window.location.href = "profile.html";
+        return;
+      }
+
       const votes = JSON.parse(localStorage.getItem("fftgVotes")) || {
         "Tacos 🌮": 0,
         "Sushi 🍣": 0,
@@ -133,8 +140,14 @@
           votes[choice]++;
           localStorage.setItem("fftgVotes", JSON.stringify(votes));
 
-          // Log vote
-          log.push({ food: choice, timestamp: new Date().toISOString() });
+          // Log full vote with profile info
+          log.push({
+            food: choice,
+            timestamp: new Date().toISOString(),
+            name: profile.name,
+            emoji: profile.emoji,
+            pic: profile.pic
+          });
           localStorage.setItem("fftgVoteLog", JSON.stringify(log));
 
           resultDiv.innerText = `You voted for ${choice}! 🎉`;
