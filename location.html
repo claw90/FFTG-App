@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Your Location - FFTG</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #fdfbfb, #ebedee);
+      color: #333;
+      text-align: center;
+      padding: 50px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    .btn {
+      padding: 12px 20px;
+      background: #f69b4;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .btn:hover {
+      background: #e258a4;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📍 Set Your Location</h1>
+    <p>We’ll use this to recommend food near you (don’t worry, we’re not tracking your ex).</p>
+    <button class="btn" onclick="getLocation()">Get My Location</button>
+    <div id="status"></div>
+    <br><br>
+    <a href="index.html" class="btn">Back to Home</a>
+  </div>
+
+  <script>
+    function getLocation() {
+      const status = document.getElementById("status");
+
+      if (!navigator.geolocation) {
+        status.innerText = "Geolocation is not supported by your browser.";
+        return;
+      }
+
+      status.innerText = "Getting your location...";
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude.toFixed(6);
+          const lon = position.coords.longitude.toFixed(6);
+
+          localStorage.setItem("fftgLocation", JSON.stringify({ lat, lon }));
+
+          status.innerHTML = `📍 Location saved!<br>Latitude: ${lat}<br>Longitude: ${lon}`;
+        },
+        (error) => {
+          status.innerText = "Error: " + error.message;
+        }
+      );
+    }
+  </script>
+</body>
+</html>
