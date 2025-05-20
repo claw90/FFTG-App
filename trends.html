@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FFTG Trends</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #fff0f5, #ffe4f1);
+      background: linear-gradient(135deg, #fceabb, #f8b500);
       color: #333;
       text-align: center;
       padding: 50px;
@@ -27,43 +27,55 @@
     }
     .bar-wrapper {
       text-align: left;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
     .label {
       font-weight: bold;
       margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .bar {
-      background-color: #f69b4;
       height: 30px;
       color: white;
       line-height: 30px;
       padding-left: 10px;
-      border-radius: 8px;
-      transition: width 0.5s ease;
-    }
-    .winner {
-      background-color: #f69b4;
-      color: #fff;
-      display: inline-block;
-      padding: 10px 20px;
       border-radius: 10px;
-      margin-top: 30px;
+      transition: width 0.5s ease;
       font-weight: bold;
     }
+    .bar.tacos { background: linear-gradient(to right, #ffa500, #ffcc70); }
+    .bar.sushi { background: linear-gradient(to right, #00c6ff, #0072ff); }
+    .bar.pizza { background: linear-gradient(to right, #ff5858, #ff0000); }
+    .bar.waffle { background: linear-gradient(to right, #d2691e, #a0522d); }
+
+    .winner {
+      background: linear-gradient(to right, #8e2de2, #4a00e0);
+      color: #fff;
+      display: inline-block;
+      padding: 12px 25px;
+      border-radius: 15px;
+      margin-top: 40px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+    }
+
     a.btn {
       display: inline-block;
       margin-top: 40px;
       padding: 10px 20px;
       background-color: #fff;
-      color: #f69b4;
-      border: 2px solid #f69b4;
+      color: #4a00e0;
+      border: 2px solid #4a00e0;
       border-radius: 10px;
       text-decoration: none;
       transition: all 0.2s ease;
+      font-weight: bold;
     }
     a.btn:hover {
-      background-color: #f69b4;
+      background-color: #4a00e0;
       color: #fff;
     }
   </style>
@@ -71,7 +83,7 @@
 <body>
   <div class="container">
     <h1>📊 FFTG Trends</h1>
-    <p class="tagline">What are the gays actually eating?</p>
+    <p class="tagline">Gay data hits harder. Let’s see the stats.</p>
 
     <div id="trend-output">
       <!-- bars will go here -->
@@ -84,12 +96,26 @@
     const output = document.getElementById("trend-output");
     const votes = JSON.parse(localStorage.getItem("fftgVotes"));
 
+    const emojis = {
+      "Tacos 🌮": "🌮",
+      "Sushi 🍣": "🍣",
+      "Pizza 🍕": "🍕",
+      "Waffle House 🧇": "🧇"
+    };
+
+    const cssClass = {
+      "Tacos 🌮": "tacos",
+      "Sushi 🍣": "sushi",
+      "Pizza 🍕": "pizza",
+      "Waffle House 🧇": "waffle"
+    };
+
     if (!votes) {
       output.innerHTML = "<p>No data found. Go vote first, sis.</p>";
     } else {
       let highest = { food: "", count: -1 };
       const allCounts = Object.values(votes);
-      const maxVotes = Math.max(...allCounts, 1); // prevent divide by 0
+      const maxVotes = Math.max(...allCounts, 1); // avoid 0/0
 
       for (const [food, count] of Object.entries(votes)) {
         const wrapper = document.createElement("div");
@@ -97,12 +123,12 @@
 
         const label = document.createElement("div");
         label.className = "label";
-        label.innerText = `${food} (${count} vote${count !== 1 ? "s" : ""})`;
+        label.innerHTML = `<span>${emojis[food]} ${food}</span><span>${count} vote${count !== 1 ? "s" : ""}</span>`;
 
         const bar = document.createElement("div");
-        bar.className = "bar";
+        bar.className = `bar ${cssClass[food]}`;
         bar.style.width = `${(count / maxVotes) * 100}%`;
-        bar.innerText = count > 0 ? `${count}` : "";
+        bar.textContent = count > 0 ? "" : "";
 
         wrapper.appendChild(label);
         wrapper.appendChild(bar);
@@ -115,7 +141,7 @@
 
       const winDiv = document.createElement("div");
       winDiv.className = "winner";
-      winDiv.textContent = `Current Leader: ${highest.food} (${highest.count} votes)`;
+      winDiv.innerText = `🏆 Leader: ${highest.food} with ${highest.count} vote${highest.count !== 1 ? "s" : ""}`;
       output.appendChild(winDiv);
     }
   </script>
