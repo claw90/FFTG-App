@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Review - FFTG</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #fff0f5, #ffe4f1);
+      color: #333;
+      text-align: center;
+      padding: 50px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+    .logo {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    .tagline {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+    .btn, .emoji-btn {
+      background-color: #fff;
+      border: 2px solid #f69b4;
+      color: #f69b4;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn:hover, .emoji-btn:hover {
+      background-color: #f69b4;
+      color: #fff;
+      transform: scale(1.05);
+    }
+    .stars {
+      margin: 20px 0;
+    }
+    .stars span {
+      font-size: 2rem;
+      cursor: pointer;
+      color: #ccc;
+    }
+    .stars span.selected {
+      color: gold;
+    }
+    #reviews {
+      margin-top: 30px;
+      text-align: left;
+    }
+    .review-entry {
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-left: 5px solid #f69b4;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      max-width: 400px;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="logo">🌟 Meal Review</h1>
+    <p class="tagline">Be honest. Be shady. Be gay.</p>
+
+    <div>
+      <h3>How’d it make you feel?</h3>
+      <button class="emoji-btn">🤤</button>
+      <button class="emoji-btn">💩</button>
+      <button class="emoji-btn">🔥</button>
+      <button class="emoji-btn">😴</button>
+    </div>
+
+    <div class="stars" id="star-rating">
+      <h3>Star Rating:</h3>
+      <span data-star="1">★</span>
+      <span data-star="2">★</span>
+      <span data-star="3">★</span>
+      <span data-star="4">★</span>
+      <span data-star="5">★</span>
+    </div>
+
+    <div>
+      <input type="text" id="review-input" placeholder="Drop your review or roast..." />
+      <button class="btn" onclick="submitReview()">Submit</button>
+    </div>
+
+    <div id="reviews">
+      <h3>Reviews:</h3>
+    </div>
+
+    <footer>
+      <a href="index.html" class="btn" style="margin-top: 20px;">Back to Home</a>
+      <p class="version">FFTG v1.0</p>
+    </footer>
+  </div>
+
+  <script>
+    const stars = document.querySelectorAll('#star-rating span');
+    let selectedStars = 0;
+
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        selectedStars = parseInt(star.getAttribute('data-star'));
+        stars.forEach(s => s.classList.remove('selected'));
+        for (let i = 0; i < selectedStars; i++) {
+          stars[i].classList.add('selected');
+        }
+      });
+    });
+
+    function submitReview() {
+      const input = document.getElementById("review-input");
+      const text = input.value.trim();
+      const reviewContainer = document.getElementById("reviews");
+
+      if (text === "" && selectedStars === 0) return;
+
+      const div = document.createElement("div");
+      div.className = "review-entry";
+      div.innerHTML = `<strong>⭐ ${selectedStars}/5</strong><br>${text || "<i>No comment, just judgment.</i>"}`;
+      reviewContainer.appendChild(div);
+      input.value = "";
+      stars.forEach(s => s.classList.remove('selected'));
+      selectedStars = 0;
+    }
+
+    const emojiButtons = document.querySelectorAll('.emoji-btn');
+    emojiButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const reviewContainer = document.getElementById("reviews");
+        const div = document.createElement("div");
+        div.className = "review-entry";
+        div.innerText = `Emoji Reaction: ${button.innerText}`;
+        reviewContainer.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
