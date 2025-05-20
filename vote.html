@@ -35,7 +35,7 @@
       background-color: #fff;
       color: #f69b4;
       padding: 15px;
-      margin: 10px auto;
+      margin: 10px auto 5px;
       width: 80%;
       max-width: 300px;
       text-decoration: none;
@@ -76,43 +76,8 @@
       font-size: 0.9rem;
       color: #777;
     }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1 class="logo">🍴 Vote On Food</h1>
-    <p class="tagline">Cast your vote before someone ends up hangry.</p>
 
-    <div class="nav" id="vote-buttons">
-      <button class="btn vote-btn" data-choice="Tacos 🌮">Tacos</button>
-      <button class="btn vote-btn" data-choice="Sushi 🍣">Sushi</button>
-      <button class="btn vote-btn" data-choice="Pizza 🍕">Pizza</button>
-      <button class="btn vote-btn" data-choice="Waffle House 🧇">Waffle House</button>
-    </div>
-
-    <div id="vote-result"></div>
-
-    <footer>
-      <a href="index.html" class="btn" style="margin-top: 20px;">Back to Home</a>
-      <p class="version">FFTG v1.0</p>
-    </footer>
-  </div>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const voteButtons = document.querySelectorAll(".vote-btn");
-      const resultDiv = document.getElementById("vote-result");
-
-      voteButtons.forEach(button => {
-        button.addEventListener("click", () => {
-          const choice = button.getAttribute("data-choice");
-          resultDiv.innerText = `You voted for ${choice}! 🎉`;
-          button.classList.add("flash");
-
-          setTimeout(() => button.classList.remove("flash"), 400);
-        });
-      });
-    });
-  </script>
-</body>
-</html>
+    .vote-count {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 20px
