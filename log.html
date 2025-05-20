@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vote Log - FFTG</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #fff0f5, #ffe4f1);
+      color: #333;
+      text-align: center;
+      padding: 50px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    .vote-entry {
+      text-align: left;
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #f69b4;
+    }
+    .details {
+      flex: 1;
+    }
+    .details .food {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    .details .meta {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #fff;
+      color: #f69b4;
+      border: 2px solid #f69b4;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.2s ease;
+    }
+    .btn:hover {
+      background-color: #f69b4;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🗂️ Vote Log</h1>
+    <div id="log-output"></div>
+    <a href="index.html" class="btn">Back to Home</a>
+  </div>
+
+  <script>
+    const log = JSON.parse(localStorage.getItem("fftgVoteLog")) || [];
+    const output = document.getElementById("log-output");
+
+    if (log.length === 0) {
+      output.innerHTML = "<p>No votes logged yet. Go cast some drama.</p>";
+    } else {
+      [...log].reverse().forEach((entry, index) => {
+        const div = document.createElement("div");
+        div.className = "vote-entry";
+
+        // Placeholder image and fake name
+        const avatar = document.createElement("img");
+        avatar.className = "avatar";
+        avatar.src = "https://via.placeholder.com/50?text=👤";
+
+        const detail = document.createElement("div");
+        detail.className = "details";
+
+        const foodLine = document.createElement("div");
+        foodLine.className = "food";
+        foodLine.textContent = `${entry.food}`;
+
+        const metaLine = document.createElement("div");
+        metaLine.className = "meta";
+        const date = new Date(entry.timestamp);
+        metaLine.innerHTML = `
+          Voted on: ${date.toLocaleString()}<br>
+          User: <i>Coming Soon</i><br>
+          Location: <i>To Be Tracked</i>
+        `;
+
+        detail.appendChild(foodLine);
+        detail.appendChild(metaLine);
+        div.appendChild(avatar);
+        div.appendChild(detail);
+        output.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
