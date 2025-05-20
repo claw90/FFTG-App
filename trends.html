@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FFTG Trends</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #fff0f5, #ffe4f1);
+      color: #333;
+      text-align: center;
+      padding: 50px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    .tagline {
+      font-style: italic;
+      margin-bottom: 30px;
+    }
+    .stat {
+      font-size: 1.3rem;
+      margin: 15px 0;
+    }
+    .winner {
+      background-color: #f69b4;
+      color: #fff;
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 10px;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+    a.btn {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 10px 20px;
+      background-color: #fff;
+      color: #f69b4;
+      border: 2px solid #f69b4;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    a.btn:hover {
+      background-color: #f69b4;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 FFTG Trends</h1>
+    <p class="tagline">What are the gays actually eating?</p>
+
+    <div id="trend-output">
+      <!-- vote totals will show here -->
+    </div>
+
+    <a href="index.html" class="btn">Back to Home</a>
+  </div>
+
+  <script>
+    const output = document.getElementById("trend-output");
+    const votes = JSON.parse(localStorage.getItem("fftgVotes"));
+
+    if (!votes) {
+      output.innerHTML = "<p>No data found. Go vote first, sis.</p>";
+    } else {
+      let highest = { food: "", count: -1 };
+
+      for (const [food, count] of Object.entries(votes)) {
+        const p = document.createElement("p");
+        p.className = "stat";
+        p.textContent = `${food}: ${count} vote${count !== 1 ? "s" : ""}`;
+        output.appendChild(p);
+
+        if (count > highest.count) {
+          highest = { food, count };
+        }
+      }
+
+      const winDiv = document.createElement("div");
+      winDiv.className = "winner";
+      winDiv.textContent = `Current Leader: ${highest.food} (${highest.count} votes)`;
+      output.appendChild(winDiv);
+    }
+  </script>
+</body>
+</html>
