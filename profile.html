@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FFTG Profile</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #fceabb, #ffdde1);
+      color: #333;
+      text-align: center;
+      padding: 50px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    input, select {
+      width: 80%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      font-size: 1rem;
+    }
+    .preview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #f69b4;
+      margin-bottom: 10px;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #f69b4;
+      color: white;
+      padding: 12px 20px;
+      font-weight: bold;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #ff4eb3;
+    }
+    footer {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧑‍🎤 Set Up Your Profile</h1>
+    <img id="profile-preview" class="preview" src="https://via.placeholder.com/100?text=👤" alt="Profile Preview" />
+    <input type="file" id="pic" accept="image/*" onchange="previewPic(event)" /><br />
+    <input type="text" id="name" placeholder="Your Name" /><br />
+    <select id="emoji">
+      <option value="">Choose a Vibe Emoji</option>
+      <option>🔥</option>
+      <option>💅</option>
+      <option>😎</option>
+      <option>👑</option>
+      <option>🍕</option>
+      <option>🌈</option>
+    </select><br />
+    <button class="btn" onclick="saveProfile()">Save Profile</button>
+
+    <footer>
+      <p>FFTG v1.0</p>
+      <a href="index.html" class="btn" style="margin-top: 20px;">Back to Home</a>
+    </footer>
+  </div>
+
+  <script>
+    // Load saved profile if it exists
+    const saved = JSON.parse(localStorage.getItem("fftgProfile"));
+    if (saved) {
+      document.getElementById("name").value = saved.name || "";
+      document.getElementById("emoji").value = saved.emoji || "";
+      if (saved.pic) {
+        document.getElementById("profile-preview").src = saved.pic;
+      }
+    }
+
+    function previewPic(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById("profile-preview").src = e.target.result;
+      };
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function saveProfile() {
+      const name = document.getElementById("name").value.trim();
+      const emoji = document.getElementById("emoji").value;
+      const pic = document.getElementById("profile-preview").src;
+
+      const profile = { name, emoji, pic };
+      localStorage.setItem("fftgProfile", JSON.stringify(profile));
+
+      alert("Profile saved! 💾");
+    }
+  </script>
+</body>
+</html>
