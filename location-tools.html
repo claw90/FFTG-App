@@ -28,6 +28,9 @@
       box-shadow: 0 0 8px rgba(0,0,0,0.1);
       text-align: left;
     }
+    h2 {
+      color: #f69b4;
+    }
     .btn {
       padding: 10px 15px;
       margin-top: 10px;
@@ -60,7 +63,7 @@
 
     <div class="section">
       <h2>2. What’s Nearby?</h2>
-      <p>Simulated results based on your coordinates. Real API comes next.</p>
+      <p>Simulated results based on your coordinates. Real API coming soon.</p>
       <button class="btn" onclick="showNearby()">Show Nearby Food</button>
       <div id="nearby-results" class="output"></div>
     </div>
@@ -72,12 +75,20 @@
       <div id="cheap-results" class="output"></div>
     </div>
 
+    <div class="section">
+      <h2>4. Where Should We Eat?</h2>
+      <p>This combines your location, vibe, and budget to make a chaotic recommendation.</p>
+      <button class="btn" onclick="decideWhereToEat()">Make a Decision For Me</button>
+      <div id="recommendation-result" class="output"></div>
+    </div>
+
     <a href="index.html" class="btn" style="margin-top: 30px;">Back to Home</a>
   </div>
 
   <script>
     const locationDiv = document.getElementById("current-location");
     const saved = JSON.parse(localStorage.getItem("fftgLocation"));
+    const profile = JSON.parse(localStorage.getItem("fftgProfile")) || { name: "Bitch", emoji: "❓" };
 
     if (saved) {
       locationDiv.innerText = `📍 Saved Location:\nLatitude: ${saved.lat}, Longitude: ${saved.lon}`;
@@ -133,6 +144,27 @@
         🍕 Little Sleazers – $<br>
         🌮 Sad Taco – $<br>
       `;
+    }
+
+    function decideWhereToEat() {
+      const loc = JSON.parse(localStorage.getItem("fftgLocation"));
+      const out = document.getElementById("recommendation-result");
+
+      if (!loc) {
+        out.innerText = "We don’t even know where you are. Get your life together.";
+        return;
+      }
+
+      const broke = document.getElementById("cheap-results").innerText.trim().length > 0;
+      const options = broke
+        ? ["Sad Taco", "Chick-in-a-Bucket", "Little Sleazers"]
+        : ["Pizza Bros", "Sushi Daddy", "Waffle Witch", "Taco Mami"];
+
+      const pick = options[Math.floor(Math.random() * options.length)];
+
+      out.innerHTML = `${profile.emoji} <strong>${profile.name}</strong>, you’re ${
+        broke ? "clearly feeling poor" : "living your best life"
+      }. <br><br><strong>Go to <span style="color:#f69b4">${pick}</span>.</strong>`;
     }
   </script>
 </body>
