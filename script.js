@@ -1,17 +1,31 @@
-// script.js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vote - FFTG</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 class="logo">🍴 Vote On Food</h1>
+    <p class="tagline">Cast your vote before someone ends up hangry.</p>
 
-// Tonya Mode (Easter egg trigger)
-function activateTonyaMode() {
-  alert("Tonya has entered the chat 💅");
-  document.body.style.background = "#000";
-  document.body.style.color = "#ff69b4";
-  document.querySelector('.logo').innerText = "✨ TONYA MODE ✨";
-}
+    <div class="nav" id="vote-buttons">
+      <button class="btn vote-btn" data-choice="Tacos 🌮">Tacos</button>
+      <button class="btn vote-btn" data-choice="Sushi 🍣">Sushi</button>
+      <button class="btn vote-btn" data-choice="Pizza 🍕">Pizza</button>
+      <button class="btn vote-btn" data-choice="Waffle House 🧇">Waffle House</button>
+    </div>
 
-// Add event listener if button exists
-document.addEventListener("DOMContentLoaded", function () {
-  const tonyaButton = document.getElementById("tonya-btn");
-  if (tonyaButton) {
-    tonyaButton.addEventListener("click", activateTonyaMode);
-  }
-});
+    <div id="vote-result" style="margin-top: 20px; font-weight: bold;"></div>
+
+    <footer>
+      <a href="index.html" class="btn" style="margin-top: 20px;">Back to Home</a>
+      <p class="version">FFTG v1.0</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
