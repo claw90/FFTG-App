@@ -12,6 +12,7 @@
       color: #333;
       text-align: center;
       padding: 50px;
+      transition: all 0.5s ease;
     }
     .container {
       max-width: 600px;
@@ -61,9 +62,36 @@
       font-size: 0.9rem;
       color: #777;
     }
+    #tonya-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 5px 10px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 99;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f69b4;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      animation: fadein 0.5s ease;
+    }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
   </style>
 </head>
 <body>
+  <button id="tonya-btn" onclick="activateTonyaMode()">Activate Tonya Mode</button>
+
   <div class="container">
     <h1 class="logo">🍴 FFTG</h1>
     <p class="tagline">Created by Chris. Approved by Tonya. Powered by chaos.</p>
@@ -80,5 +108,23 @@
       <p class="version">FFTG v1.0</p>
     </footer>
   </div>
+
+  <script>
+    function activateTonyaMode() {
+      document.body.style.background = 'linear-gradient(45deg, #ff00cc, #3333ff, #00ffcc)';
+      const buttons = document.querySelectorAll('.btn');
+      buttons.forEach(btn => {
+        btn.style.backgroundColor = '#fff';
+        btn.style.color = '#ff00cc';
+        btn.style.borderColor = '#ff00cc';
+      });
+
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.innerText = "Tonya Mode Activated 💅";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
 </body>
 </html>
