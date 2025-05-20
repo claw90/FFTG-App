@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Location Tools - FFTG</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #fdfbfb, #ebedee);
+      color: #333;
+      text-align: center;
+      padding: 40px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    .section {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    .btn {
+      padding: 10px 15px;
+      margin-top: 10px;
+      background: #f69b4;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #e258a4;
+    }
+    .output {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📍 Location Tools</h1>
+
+    <div class="section">
+      <h2>1. Your Current Location</h2>
+      <div id="current-location" class="output">Loading...</div>
+      <button class="btn" onclick="getLocation()">Update My Location</button>
+    </div>
+
+    <div class="section">
+      <h2>2. What’s Nearby?</h2>
+      <p>Simulated results based on your coordinates. Real API comes next.</p>
+      <button class="btn" onclick="showNearby()">Show Nearby Food</button>
+      <div id="nearby-results" class="output"></div>
+    </div>
+
+    <div class="section">
+      <h2>3. I’m Feeling Poor</h2>
+      <p>Fake-filtered cheap options. Real filtering with API in Phase 2.</p>
+      <button class="btn" onclick="showCheap()">Show Cheap Places</button>
+      <div id="cheap-results" class="output"></div>
+    </div>
+
+    <a href="index.html" class="btn" style="margin-top: 30px;">Back to Home</a>
+  </div>
+
+  <script>
+    const locationDiv = document.getElementById("current-location");
+    const saved = JSON.parse(localStorage.getItem("fftgLocation"));
+
+    if (saved) {
+      locationDiv.innerText = `📍 Saved Location:\nLatitude: ${saved.lat}, Longitude: ${saved.lon}`;
+    } else {
+      locationDiv.innerText = "No location saved yet.";
+    }
+
+    function getLocation() {
+      locationDiv.innerText = "Getting your location...";
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude.toFixed(6);
+          const lon = position.coords.longitude.toFixed(6);
+
+          localStorage.setItem("fftgLocation", JSON.stringify({ lat, lon }));
+          locationDiv.innerText = `📍 Updated!\nLatitude: ${lat}, Longitude: ${lon}`;
+        },
+        (error) => {
+          locationDiv.innerText = "Error: " + error.message;
+        }
+      );
+    }
+
+    function showNearby() {
+      const loc = JSON.parse(localStorage.getItem("fftgLocation"));
+      const out = document.getElementById("nearby-results");
+      if (!loc) {
+        out.innerText = "No location available.";
+        return;
+      }
+
+      // Fake results for now
+      out.innerHTML = `
+        🍕 Pizza Bros – 0.5 mi<br>
+        🌮 Taco Mami – 0.8 mi<br>
+        🍣 Sushi Daddy – 1.2 mi<br>
+        🧇 Waffle Witch – 2.1 mi
+      `;
+    }
+
+    function showCheap() {
+      const loc = JSON.parse(localStorage.getItem("fftgLocation"));
+      const out = document.getElementById("cheap-results");
+      if (!loc) {
+        out.innerText = "No location available.";
+        return;
+      }
+
+      // Fake filtered cheap options
+      out.innerHTML = `
+        🐔 Chick-in-a-Bucket – $<br>
+        🍕 Little Sleazers – $<br>
+        🌮 Sad Taco – $<br>
+      `;
+    }
+  </script>
+</body>
+</html>
