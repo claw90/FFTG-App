@@ -110,17 +110,26 @@
       const voteButtons = document.querySelectorAll(".vote-btn");
       const resultDiv = document.getElementById("vote-result");
 
-      const votes = {
+      // Load from localStorage or set defaults
+      const votes = JSON.parse(localStorage.getItem("fftgVotes")) || {
         "Tacos 🌮": 0,
         "Sushi 🍣": 0,
         "Pizza 🍕": 0,
         "Waffle House 🧇": 0
       };
 
+      // Update all counters on page load
+      document.getElementById("count-tacos").innerText = `Votes: ${votes["Tacos 🌮"]}`;
+      document.getElementById("count-sushi").innerText = `Votes: ${votes["Sushi 🍣"]}`;
+      document.getElementById("count-pizza").innerText = `Votes: ${votes["Pizza 🍕"]}`;
+      document.getElementById("count-waffle").innerText = `Votes: ${votes["Waffle House 🧇"]}`;
+
       voteButtons.forEach(button => {
         button.addEventListener("click", () => {
           const choice = button.getAttribute("data-choice");
           votes[choice]++;
+          localStorage.setItem("fftgVotes", JSON.stringify(votes));
+
           resultDiv.innerText = `You voted for ${choice}! 🎉`;
           button.classList.add("flash");
 
