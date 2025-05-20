@@ -14,7 +14,7 @@
       padding: 50px;
     }
     .container {
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
     }
     h1 {
@@ -25,9 +25,22 @@
       font-style: italic;
       margin-bottom: 30px;
     }
-    .stat {
-      font-size: 1.3rem;
-      margin: 15px 0;
+    .bar-wrapper {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    .label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .bar {
+      background-color: #f69b4;
+      height: 30px;
+      color: white;
+      line-height: 30px;
+      padding-left: 10px;
+      border-radius: 8px;
+      transition: width 0.5s ease;
     }
     .winner {
       background-color: #f69b4;
@@ -61,7 +74,7 @@
     <p class="tagline">What are the gays actually eating?</p>
 
     <div id="trend-output">
-      <!-- vote totals will show here -->
+      <!-- bars will go here -->
     </div>
 
     <a href="index.html" class="btn">Back to Home</a>
@@ -75,12 +88,25 @@
       output.innerHTML = "<p>No data found. Go vote first, sis.</p>";
     } else {
       let highest = { food: "", count: -1 };
+      const allCounts = Object.values(votes);
+      const maxVotes = Math.max(...allCounts, 1); // prevent divide by 0
 
       for (const [food, count] of Object.entries(votes)) {
-        const p = document.createElement("p");
-        p.className = "stat";
-        p.textContent = `${food}: ${count} vote${count !== 1 ? "s" : ""}`;
-        output.appendChild(p);
+        const wrapper = document.createElement("div");
+        wrapper.className = "bar-wrapper";
+
+        const label = document.createElement("div");
+        label.className = "label";
+        label.innerText = `${food} (${count} vote${count !== 1 ? "s" : ""})`;
+
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.width = `${(count / maxVotes) * 100}%`;
+        bar.innerText = count > 0 ? `${count}` : "";
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(bar);
+        output.appendChild(wrapper);
 
         if (count > highest.count) {
           highest = { food, count };
