@@ -62,9 +62,9 @@
     </div>
 
     <div class="section">
-      <h2>2. What’s Nearby (Live)</h2>
-      <p>These are pulled from Google Maps, within 2km of your saved location.</p>
-      <button class="btn" onclick="getNearbyPlaces()">Show Real Restaurants</button>
+      <h2>2. What’s Nearby (LIVE from Google)</h2>
+      <p>This uses the REST API, so it works in 2025+ without the deprecated JS crap.</p>
+      <button class="btn" onclick="getNearbyRestaurants()">Show Real Restaurants</button>
       <div id="live-results" class="output"></div>
     </div>
 
@@ -72,11 +72,12 @@
   </div>
 
   <script>
+    const apiKey = "AIzaSyDYsZRxDpZtnYUNYP2QjFGc_sfFCpialG4";
     const locationDiv = document.getElementById("current-location");
-    const saved = JSON.parse(localStorage.getItem("fftgLocation"));
 
+    const saved = JSON.parse(localStorage.getItem("fftgLocation"));
     if (saved) {
-      locationDiv.innerText = `📍 Saved Location:\nLatitude: ${saved.lat}, Longitude: ${saved.lon}`;
+      locationDiv.innerText = `📍 Updated!\nLatitude: ${saved.lat}, Longitude: ${saved.lon}`;
     } else {
       locationDiv.innerText = "No location saved yet.";
     }
@@ -88,7 +89,6 @@
         (position) => {
           const lat = position.coords.latitude.toFixed(6);
           const lon = position.coords.longitude.toFixed(6);
-
           localStorage.setItem("fftgLocation", JSON.stringify({ lat, lon }));
           locationDiv.innerText = `📍 Updated!\nLatitude: ${lat}, Longitude: ${lon}`;
         },
@@ -98,45 +98,40 @@
       );
     }
 
-    function getNearbyPlaces() {
-      const out = document.getElementById("live-results");
-      out.innerHTML = "Loading places...";
-
+    async function getNearbyRestaurants() {
       const loc = JSON.parse(localStorage.getItem("fftgLocation"));
+      const out = document.getElementById("live-results");
+
       if (!loc) {
-        out.innerText = "No location set.";
+        out.innerText = "No location saved.";
         return;
       }
 
-      const map = new google.maps.Map(document.createElement("div"));
-      const service = new google.maps.places.PlacesService(map);
+      out.innerText = "Loading real restaurants...";
 
-      const request = {
-        location: new google.maps.LatLng(loc.lat, loc.lon),
-        radius: 2000, // meters
-        type: ['restaurant']
-      };
+      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${loc.lat},${loc.lon}&radius=2000&type=restaurant&key=${apiKey}`;
 
-      service.nearbySearch(request, (results, status) => {
-        if (status !== google.maps.places.PlacesServiceStatus.OK || !results.length) {
-          out.innerText = "No places found nearby.";
+      try {
+        const proxy = "https://corsproxy.io/?"; // Free CORS proxy workaround
+        const response = await fetch(proxy + encodeURIComponent(url));
+        const data = await response.json();
+
+        if (!data.results || data.results.length === 0) {
+          out.innerText = "No results found.";
           return;
         }
 
-        const list = results
-          .slice(0, 10)
-          .map(place => {
-            const name = place.name;
-            const rating = place.rating || "N/A";
-            const price = "💲".repeat(place.price_level || 1);
-            return `${price} <strong>${name}</strong> – ⭐ ${rating}`;
-          }).join("<br><br>");
-
-        out.innerHTML = list;
-      });
+        out.innerHTML = data.results.slice(0, 10).map(place => {
+          const name = place.name;
+          const rating = place.rating || "N/A";
+          const price = place.price_level ? "💲".repeat(place.price_level) : "💲";
+          return `${price} <strong>${name}</strong> – ⭐ ${rating}`;
+        }).join("<br><br>");
+      } catch (err) {
+        console.error(err);
+        out.innerText = "Error loading data. Probably a CORS or API issue.";
+      }
     }
   </script>
-
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDYsZRxDpZtnYUNYP2QjFGc_sfFCpialG4&libraries=places"></script>
 </body>
 </html>
