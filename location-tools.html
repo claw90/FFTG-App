@@ -1,137 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Location Tools - FFTG</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #fdfbfb, #ebedee);
-      color: #333;
-      text-align: center;
-      padding: 40px;
-    }
-    .container {
-      max-width: 700px;
-      margin: auto;
-    }
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-    }
-    .section {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 20px 0;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      text-align: left;
-    }
-    h2 {
-      color: #f69b4;
-    }
-    .btn {
-      padding: 10px 15px;
-      margin-top: 10px;
-      background: #f69b4;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .btn:hover {
-      background: #e258a4;
-    }
-    .output {
-      margin-top: 10px;
-      font-size: 0.95rem;
-      color: #555;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>📍 Location Tools</h1>
+<script>
+  const netlifyFunctionURL = "https://YOUR-SITE-NAME.netlify.app/.netlify/functions/places";
 
-    <div class="section">
-      <h2>1. Your Current Location</h2>
-      <div id="current-location" class="output">Loading...</div>
-      <button class="btn" onclick="getLocation()">Update My Location</button>
-    </div>
+  const locationDiv = document.getElementById("current-location");
 
-    <div class="section">
-      <h2>2. What’s Nearby (LIVE from Google)</h2>
-      <p>These are actual restaurants pulled from Google — not some sad fake ones.</p>
-      <button class="btn" onclick="getNearbyRestaurants()">Show Real Restaurants</button>
-      <div id="live-results" class="output"></div>
-    </div>
+  const saved = JSON.parse(localStorage.getItem("fftgLocation"));
+  if (saved) {
+    locationDiv.innerText = `📍 Updated!\nLatitude: ${saved.lat}, Longitude: ${saved.lon}`;
+  } else {
+    locationDiv.innerText = "No location saved yet.";
+  }
 
-    <a href="index.html" class="btn" style="margin-top: 30px;">Back to Home</a>
-  </div>
+  function getLocation() {
+    locationDiv.innerText = "Getting your location...";
 
-  <script>
-    const apiKey = "AIzaSyDYsZRxDpZtnYUNYP2QjFGc_sfFCpialG4";
-    const locationDiv = document.getElementById("current-location");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude.toFixed(6);
+        const lon = position.coords.longitude.toFixed(6);
+        localStorage.setItem("fftgLocation", JSON.stringify({ lat, lon }));
+        locationDiv.innerText = `📍 Updated!\nLatitude: ${lat}, Longitude: ${lon}`;
+      },
+      (error) => {
+        locationDiv.innerText = "Error: " + error.message;
+      }
+    );
+  }
 
-    const saved = JSON.parse(localStorage.getItem("fftgLocation"));
-    if (saved) {
-      locationDiv.innerText = `📍 Updated!\nLatitude: ${saved.lat}, Longitude: ${saved.lon}`;
-    } else {
-      locationDiv.innerText = "No location saved yet.";
+  async function getNearbyRestaurants() {
+    const out = document.getElementById("live-results");
+    const loc = JSON.parse(localStorage.getItem("fftgLocation"));
+
+    if (!loc) {
+      out.innerText = "No location saved.";
+      return;
     }
 
-    function getLocation() {
-      locationDiv.innerText = "Getting your location...";
+    out.innerText = "Loading real restaurants...";
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude.toFixed(6);
-          const lon = position.coords.longitude.toFixed(6);
-          localStorage.setItem("fftgLocation", JSON.stringify({ lat, lon }));
-          locationDiv.innerText = `📍 Updated!\nLatitude: ${lat}, Longitude: ${lon}`;
-        },
-        (error) => {
-          locationDiv.innerText = "Error: " + error.message;
-        }
-      );
-    }
+    try {
+      const res = await fetch(`${netlifyFunctionURL}?lat=${loc.lat}&lon=${loc.lon}`);
+      const data = await res.json();
 
-    async function getNearbyRestaurants() {
-      const loc = JSON.parse(localStorage.getItem("fftgLocation"));
-      const out = document.getElementById("live-results");
-
-      if (!loc) {
-        out.innerText = "No location saved.";
+      if (!data.results || data.results.length === 0) {
+        out.innerText = "No results found.";
         return;
       }
 
-      out.innerText = "Loading real restaurants...";
-
-      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${loc.lat},${loc.lon}&radius=2000&type=restaurant&key=${apiKey}`;
-      const proxy = "https://thingproxy.freeboard.io/fetch/";
-
-      try {
-        const response = await fetch(proxy + url);
-        const data = await response.json();
-
-        if (!data.results || data.results.length === 0) {
-          out.innerText = "No results found.";
-          return;
-        }
-
-        out.innerHTML = data.results.slice(0, 10).map(place => {
-          const name = place.name;
-          const rating = place.rating || "N/A";
-          const price = place.price_level ? "💲".repeat(place.price_level) : "💲";
-          return `${price} <strong>${name}</strong> – ⭐ ${rating}`;
-        }).join("<br><br>");
-      } catch (err) {
-        console.error(err);
-        out.innerText = "Still didn’t work. Might be Google or proxy error.";
-      }
+      out.innerHTML = data.results.slice(0, 10).map(place => {
+        const name = place.name;
+        const rating = place.rating || "N/A";
+        const price = place.price_level ? "💲".repeat(place.price_level) : "💲";
+        return `${price} <strong>${name}</strong> – ⭐ ${rating}`;
+      }).join("<br><br>");
+    } catch (err) {
+      console.error(err);
+      out.innerText = "Error getting restaurant data.";
     }
-  </script>
-</body>
-</html>
+  }
+</script>
