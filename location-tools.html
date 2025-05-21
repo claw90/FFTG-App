@@ -63,7 +63,7 @@
 
     <div class="section">
       <h2>2. What’s Nearby (LIVE from Google)</h2>
-      <p>This uses the REST API, so it works in 2025+ without the deprecated JS crap.</p>
+      <p>These are actual restaurants pulled from Google — not some sad fake ones.</p>
       <button class="btn" onclick="getNearbyRestaurants()">Show Real Restaurants</button>
       <div id="live-results" class="output"></div>
     </div>
@@ -110,10 +110,10 @@
       out.innerText = "Loading real restaurants...";
 
       const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${loc.lat},${loc.lon}&radius=2000&type=restaurant&key=${apiKey}`;
+      const proxy = "https://thingproxy.freeboard.io/fetch/";
 
       try {
-        const proxy = "https://corsproxy.io/?"; // Free CORS proxy workaround
-        const response = await fetch(proxy + encodeURIComponent(url));
+        const response = await fetch(proxy + url);
         const data = await response.json();
 
         if (!data.results || data.results.length === 0) {
@@ -129,7 +129,7 @@
         }).join("<br><br>");
       } catch (err) {
         console.error(err);
-        out.innerText = "Error loading data. Probably a CORS or API issue.";
+        out.innerText = "Still didn’t work. Might be Google or proxy error.";
       }
     }
   </script>
